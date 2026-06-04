@@ -1,5 +1,5 @@
-import requests
-# For internet connection
+from openai import OpenAI
+# For AI connection
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 # ------------------ Text -- Buttons ------------- Sorting Buttons
@@ -13,25 +13,14 @@ load_dotenv()
 TOKEN = os.environ.get("TOKEN")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
+# AI client setup
+client = OpenAI(
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1"
+)
 
-# For default text ⤵️
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-# wait -- name --------- event --------- other kind of data 
-    user_text = update.message.text
-#-- ---------- the user text 👆🏻
-#-- sending req to open router ⤵️
-    try:
-        response = requests.post( # POST
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",# Bearer : Login mode , Auth : sending api key
-                "Content-Type": "application/json" # JSON data
-            },
-            # What we send? ⤵️ 
-            json={
-                "model": "openai/gpt-oss-120b:free", # AI MODEL
-                "messages": [ # Message , system is the first prompt , user is our user, text from user_text (Line 16)
-                    {"role": "system", "content": """تو یک دستیار مهاجرت دوستانه و حرفه‌ای هستی. به کاربران کمک می‌کنی بهترین مسیر مهاجرتی رو بر اساس شرایط شخصیشون پیدا کنن — چه تحصیلی، چه کاری، چه اقامت دائم.
+
+SYSTEM_PROMPT = """تو یک دستیار مهاجرت دوستانه و حرفه‌ای هستی. به کاربران کمک می‌کنی بهترین مسیر مهاجرتی رو بر اساس شرایط شخصیشون پیدا کنن — چه تحصیلی، چه کاری، چه اقامت دائم.
 
                     اگه کاربر سوال کلی پرسید، جواب کلی بده. فقط وقتی کاربر خودش خواست مسیر شخصی‌سازی شده بدونه، اطلاعاتش رو بپرس:
                     - سن
@@ -48,31 +37,33 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     - درباره شانس واقعی صادق باش — هیچ‌وقت پذیرش، ویزا یا اقامت رو تضمین نکن
                     - خودت رو وکیل یا مشاور رسمی مهاجرت معرفی نکن
 
-                    لحنت گرم، شفاف و حمایتگر باشه — مثل یه دوست آگاه که واقعاً میخواد کمک کنه. همیشه به زبانی که کاربر باهات صحبت میکنه جواب بده.
+                      لحنت گرم، شفاف و حمایتگر باشه — مثل یه دوست آگاه که واقعاً میخواد کمک کنه. همیشه به زبانی که کاربر باهات صحبت میکنه جواب بده. از جواب دادن به سوالات غیرمرتبط خودداری کن.
                      پاسخ‌هات رو با Markdown فرمت کن:
                      از # برای هدر استفاده نکن.     
                     - برای تیتر از *تیتر* استفاده کن
                     - برای لیست از - استفاده کن
                     - برای متن مهم از *متن* استفاده کن
-                    - برای کد از `کد` استفاده کن"""},
-                    {"role": "user", "content": user_text}
-                ],
-                "max_tokens": 500 # Usage of AI
-            },
-            timeout=30 
+                    - برای کد از `کد` استفاده کن"""
+# For default text ⤵️
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# wait -- name --------- event --------- other kind of data 
+    user_text = update.message.text
+#-- ---------- the user text 👆🏻
+
+    thinking_msg = await update.message.reply_text("⏳ در حال فکر کردن...")
+#-- sending req to open router ⤵️
+
+    try:
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b:free",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_text}
+            ],
+            max_tokens=1000
         )
+        reply = response.choices[0].message.content
     # Code 200 = OK!
-        if response.status_code == 200:
-            data = response.json()
-            reply = data["choices"][0]["message"]["content"]
-
-        elif response.status_code == 429:
-            reply = "⏳ سرور شلوغه، چند ثانیه بعد دوباره امتحان کن."
-
-        else:
-            print("API ERROR:", response.status_code, response.text)
-            reply = "خطا در ارتباط با هوش مصنوعی."
-
     except Exception as e:
         print("EXCEPTION:", e)
         reply = "مشکل در اتصال به سرور."
@@ -81,6 +72,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not reply or reply.strip() == "":
         reply = "پاسخ نامعتبر دریافت شد."
 
+# ends & delete thinking message
+    await thinking_msg.delete()
 # async ends & message sent
     await update.message.reply_text(reply, parse_mode="Markdown")
 
