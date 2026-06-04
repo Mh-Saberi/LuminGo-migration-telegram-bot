@@ -11,6 +11,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
 #-- ---------- the user text 👆🏻
 
+#-- get the conversation history
+    history = context.user_data.get("history", [])
+    history.append({"role": "user", "content": user_text})
+
     thinking_msg = await update.message.reply_text("⏳ در حال فکر کردن...")
 #-- sending req to open router ⤵️
 
@@ -24,6 +28,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             max_tokens=1000
         )
         reply = response.choices[0].message.content
+
+#-- save the conversation history
+        history.append({"role": "assistant", "content": reply})
+        context.user_data["history"] = history
     # Code 200 = OK!
     except Exception as e:
         print("EXCEPTION:", e)
