@@ -1,46 +1,37 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-# ------------------ Text -- Buttons ------------- Sorting Buttons
-from telegram.ext import Application, MessageHandler, filters, ContextTypes, CommandHandler, CallbackQueryHandler
-# ---------------------- The Core --- Text rcv ------ type --- def types --- /start -------- Buttons rcv
+from telegram import Update
+from telegram.ext import ContextTypes
 from config import client, SYSTEM_PROMPT
 
 
-# For default text ⤵️
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-# wait -- name --------- event --------- other kind of data 
     user_text = update.message.text
-#-- ---------- the user text 👆🏻
 
-#-- get the conversation history
-    history = context.user_data.get("history", [])
+    # get the conversation history
+    if "history" not in context.user_data:
+        context.user_data["history"] = []
+    history = context.user_data["history"]
     history.append({"role": "user", "content": user_text})
 
     thinking_msg = await update.message.reply_text("⏳ در حال فکر کردن...")
-#-- sending req to open router ⤵️
 
     try:
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b:free",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-            ] + history,
+            messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
             max_tokens=1000
         )
         reply = response.choices[0].message.content
 
-#-- save the conversation history
+        # save only last 10 messages to avoid memory issues
         history.append({"role": "assistant", "content": reply})
-        context.user_data["history"] = history
-    # Code 200 = OK!
+        context.user_data["history"] = history[-5:]
+
     except Exception as e:
         print("EXCEPTION:", e)
         reply = "مشکل در اتصال به سرور."
 
-    
     if not reply or reply.strip() == "":
         reply = "پاسخ نامعتبر دریافت شد."
 
-# ends & delete thinking message
     await thinking_msg.delete()
-# async ends & message sent
     await update.message.reply_text(reply, parse_mode="Markdown")
