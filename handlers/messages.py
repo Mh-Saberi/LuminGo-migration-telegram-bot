@@ -23,8 +23,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             model="openai/gpt-oss-120b:free",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_text}
-            ],
+            ] + history,
             max_tokens=1000
         )
         reply = response.choices[0].message.content
