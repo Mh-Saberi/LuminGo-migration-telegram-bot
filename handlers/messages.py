@@ -18,7 +18,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b:free",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
-            max_tokens=1000
+            max_tokens=500
         )
         reply = response.choices[0].message.content
 
