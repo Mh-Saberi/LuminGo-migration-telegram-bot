@@ -97,6 +97,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("مکالمه جدید شروع شد! 🔄")
 
+# clearing chat
+async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("───────────────\n🔄 چت پاک شد! بفرمایید:")
 # Buttons 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -141,9 +144,11 @@ def main():
 
     # هندلرها
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("restart", restart))
+    app.add_handler(CommandHandler("clear", clear))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.add_handler(CommandHandler("restart", restart))
+    
 
     print("OK!")
     app.run_polling() # همش سوال میپرسه
