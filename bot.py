@@ -48,7 +48,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     - درباره شانس واقعی صادق باش — هیچ‌وقت پذیرش، ویزا یا اقامت رو تضمین نکن
                     - خودت رو وکیل یا مشاور رسمی مهاجرت معرفی نکن
 
-                    لحنت گرم، شفاف و حمایتگر باشه — مثل یه دوست آگاه که واقعاً میخواد کمک کنه. همیشه به زبانی که کاربر باهات صحبت میکنه جواب بده."""},
+                    لحنت گرم، شفاف و حمایتگر باشه — مثل یه دوست آگاه که واقعاً میخواد کمک کنه. همیشه به زبانی که کاربر باهات صحبت میکنه جواب بده.
+                     پاسخ‌هات رو با Markdown فرمت کن:
+                    - برای تیتر از *تیتر* استفاده کن
+                    - برای لیست از - استفاده کن
+                    - برای متن مهم از *متن* استفاده کن
+                    - برای کد از `کد` استفاده کن"""},
                     {"role": "user", "content": user_text}
                 ],
                 "max_tokens": 500 # Usage of AI
@@ -75,7 +80,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply = "پاسخ نامعتبر دریافت شد."
 
 # async ends & message sent
-    await update.message.reply_text(reply)
+    await update.message.reply_text(reply, parse_mode="Markdown")
 
 # first message of user : /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
