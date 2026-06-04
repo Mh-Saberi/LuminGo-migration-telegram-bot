@@ -58,6 +58,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ],
                 "max_tokens": 500 # Usage of AI
             },
+            timeout=30 
         )
     # Code 200 = OK!
         if response.status_code == 200:
