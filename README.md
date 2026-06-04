@@ -55,8 +55,6 @@ If you want to run your own instance:
 ### Installation
 
 ```bash
-git clone https://github.com/Mh-Saberi/LuminGo-migration-telegram-bot.git
-cd LuminGo-migration-telegram-bot
 pip install -r requirements.txt
 ```
 
