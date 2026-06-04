@@ -16,7 +16,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         response = client.chat.completions.create(
-            model="meta-llama/llama-3.1-8b-instruct:free",
+            model="openai/gpt-oss-120b:free",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
             max_tokens=500
         )
