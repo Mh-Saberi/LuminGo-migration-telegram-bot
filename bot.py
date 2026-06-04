@@ -1,0 +1,145 @@
+import requests
+# For internet connection
+
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+# ------------------ Text -- Buttons ------------- Sorting Buttons
+from telegram.ext import Application, MessageHandler, filters, ContextTypes, CommandHandler, CallbackQueryHandler
+# ---------------------- The Core --- Text rcv ------ type --- def types --- /start -------- Buttons rcv
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+TOKEN = os.environ.get("TOKEN")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+
+
+# For default text ⤵️
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# wait -- name --------- event --------- other kind of data 
+    user_text = update.message.text
+#-- ---------- the user text 👆🏻
+#-- sending req to open router ⤵️
+    try:
+        response = requests.post( # POST
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",# Bearer : Login mode , Auth : sending api key
+                "Content-Type": "application/json" # JSON data
+            },
+            # What we send? ⤵️ 
+            json={
+                "model": "openai/gpt-oss-120b:free", # AI MODEL
+                "messages": [ # Message , system is the first prompt , user is our user, text from user_text (Line 16)
+                    {"role": "system", "content": """شما یک دستیار هوشمند مهاجرت هستید و به کاربران در زمینه مهاجرت تحصیلی، کاری و اقامتی کمک می‌کنید.
+
+                    - پاسخ‌ها دقیق، شفاف و کاربردی باشند.
+                    - قبل از ارائه پیشنهاد، اطلاعات لازم مانند سن، تحصیلات، معدل، سابقه کاری، سطح زبان و کشور مقصد را دریافت کنید.
+                    - بر اساس شرایط کاربر، مسیرهای مناسب مهاجرت را پیشنهاد دهید.
+                    - برای مهاجرت تحصیلی، دانشگاه‌ها و برنامه‌های تحصیلی متناسب با شانس پذیرش کاربر را معرفی کنید.
+                    - هزینه‌ها، مدارک موردنیاز، زمان‌بندی و چالش‌های هر مسیر را توضیح دهید.
+                    - از ارائه اطلاعات نادرست یا تضمین پذیرش، ویزا یا اقامت خودداری کنید.
+                    - خود را وکیل یا مرجع رسمی مهاجرت معرفی نکنید.
+
+                    هدف شما کمک به کاربران برای انتخاب بهترین گزینه مهاجرتی متناسب با شرایط آن‌ها است."""},
+                    {"role": "user", "content": user_text}
+                ],
+                "max_tokens": 500 # Usage of AI
+            },
+        )
+    # Code 200 = OK!
+        if response.status_code == 200:
+            data = response.json()
+            reply = data["choices"][0]["message"]["content"]
+
+        elif response.status_code == 429:
+            reply = "⏳ سرور شلوغه، چند ثانیه بعد دوباره امتحان کن."
+
+        else:
+            print("API ERROR:", response.status_code, response.text)
+            reply = "خطا در ارتباط با هوش مصنوعی."
+
+    except Exception as e:
+        print("EXCEPTION:", e)
+        reply = "مشکل در اتصال به سرور."
+
+    
+    if not reply or reply.strip() == "":
+        reply = "پاسخ نامعتبر دریافت شد."
+
+# async ends & message sent
+    await update.message.reply_text(reply)
+
+# first message of user : /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("📘 راهنما", callback_data="guide")],
+        [InlineKeyboardButton("❓ سوالات متداول", callback_data="faq")],
+        [InlineKeyboardButton("📞 پشتیبانی", callback_data="support")]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard) # telegram knows this!
+
+    welcome_text = (
+        """خوش آمدید 👋
+        من دستیار مهاجرت شما هستم. کمک می‌کنم بهترین مسیرهای تحصیلی، کاری یا اقامت دائم را بر اساس شرایط شما پیدا کنید.
+        برای شروع، کمی درباره خودتان بگویید."""
+    )
+    await update.message.reply_text(welcome_text, reply_markup=reply_markup)
+
+# Buttons 
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()  # stops flicker telegram needs this one
+
+    data = query.data # callback_data
+    if data == "guide":
+        text = (
+            """📘 راهنمای سریع 
+            1️⃣ شرایط خود را بگویید: سن، تحصیلات، سابقه کاری، زبان و کشور مقصد.
+            2️⃣ من مسیرهای مناسب را پیشنهاد می‌کنم: تحصیلی، کاری یا اقامت دائم.
+            3️⃣ برای هر مسیر، دانشگاه‌ها، هزینه‌ها، مدارک و چالش‌ها را توضیح می‌دهم.
+            4️⃣ سوالات خود را بپرسید، من پاسخ می‌دهم!"""
+        )
+    elif data == "faq":
+        text = (
+            """❓ سوالات متداول دانشجویان
+            1️⃣ بهترین کشور برای مهاجرت تحصیلی کدام است؟
+            2️⃣ چطور شانس پذیرش در دانشگاه‌ها را افزایش دهم؟
+            3️⃣ هزینه‌های مهاجرت چقدر است؟
+            4️⃣ چه مدارکی برای ویزا نیاز دارم؟
+           """
+        )
+    elif data == "support":
+        text = (
+            """📞 پشتیبانی
+            برای سوالات بیشتر یا کمک، لطفاً با پشتیبانی ما تماس بگیرید:
+            📧 ایمیل: saberimahtab2002@gmail.com
+            📞 تلفن: 09375607637"""
+        )
+    else:
+        text = "دکمه ناشناخته!"
+
+    await query.edit_message_text(text)  # جایگزینی پیام قبلی با پاسخ
+    # اگر نمی‌خواهید پیام قبلی عوض شود، می‌توانید از query.message.reply_text استفاده کنید.
+
+# --- تابع اصلی ---
+def main():
+    app = Application.builder().token(TOKEN).build()
+# اول یه اپلیکیشن می‌سازیم با استفاده از توکن ربات. این شیء همه کارهای ربات رو راه می‌ندازه.
+
+
+    # هندلرها
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    print("OK!")
+    app.run_polling() # همش سوال میپرسه
+
+if __name__ == "__main__":
+    main()
+
+# python bot.py ==> __name__ --> "__main__"
+# iport bot ==> __name__ --> bot
+# Why == | Run directly? 
+# main() runs!
