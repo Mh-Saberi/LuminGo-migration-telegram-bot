@@ -16,7 +16,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         response = client.chat.completions.create(
-            model="deepseek/deepseek-chat-v3-0324:free",
+            model="google/gemini-2.0-flash-exp:free",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
             max_tokens=500
         )
