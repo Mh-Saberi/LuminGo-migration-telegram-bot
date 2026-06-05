@@ -22,6 +22,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # restart conversation without /start
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await start(update, context)  # just call start again
     await update.message.reply_text("مکالمه جدید شروع شد! 🔄")
 
 async def clear_history(update: Update, context: ContextTypes.DEFAULT_TYPE):

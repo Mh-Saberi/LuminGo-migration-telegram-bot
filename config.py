@@ -6,6 +6,8 @@ load_dotenv()
 
 TOKEN = os.environ.get("TOKEN")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+PORT = int(os.getenv("PORT", 8080))
 
 # AI client setup
 client = OpenAI(
@@ -21,6 +23,6 @@ SYSTEM_PROMPT = """تو یک دستیار مهاجرت دوستانه و حرف�
 - صادق باش — هیچ‌وقت پذیرش یا ویزا رو تضمین نکن
 - خودت رو وکیل یا مشاور رسمی معرفی نکن
 - فقط به سوالات مرتبط با مهاجرت جواب بده
+- پاسخ‌هات مختصر، جامع و کاربردی باشه. از توضیحات اضافه و تکراری پرهیز کن.
 *لحن:* گرم و حمایتگر، به زبان کاربر جواب بده.
-
 *فرمت پاسخ:* از # استفاده نکن — تیتر: *تیتر*، لیست: - ، متن مهم: *متن*"""
