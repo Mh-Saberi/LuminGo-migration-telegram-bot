@@ -24,3 +24,4 @@ async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def clear_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["history"] = []
     await update.message.reply_text("تاریخچه مکالمه پاک شد! 🗑️")
+    

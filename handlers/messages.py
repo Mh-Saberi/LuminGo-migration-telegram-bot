@@ -16,7 +16,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         response = client.chat.completions.create(
-            model="openai/gpt-oss-120b:free",
+            model="deepseek/deepseek-chat-v3-0324:free",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
             max_tokens=500
         )
