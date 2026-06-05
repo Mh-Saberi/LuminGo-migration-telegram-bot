@@ -35,6 +35,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await thinking_msg.delete()
 
+# Telegram has a message length limit, so we need to split long replies into parts
     MAX_LEN = 4000
     if len(reply) <= MAX_LEN:
         await update.message.reply_text(reply, parse_mode="Markdown")
