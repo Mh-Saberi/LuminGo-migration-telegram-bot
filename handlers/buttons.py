@@ -27,9 +27,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "support":
         text = (
             """📞 پشتیبانی
-            برای سوالات بیشتر یا کمک، لطفاً با پشتیبانی ما تماس بگیرید:
-            📧 ایمیل: saberimahtab2002@gmail.com
-            📞 تلفن: 09375607637"""
+              برای سوالات بیشتر یا کمک، لطفاً با پشتیبانی ما تماس بگیرید:
+              📧 ایمیل: saberimahtab2002@gmail.com
+                📞 تلفن: 09375607637"""
         )
     else:
         text = "دکمه ناشناخته!"
