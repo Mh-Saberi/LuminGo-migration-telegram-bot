@@ -11,9 +11,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard) # telegram knows this!
 
     welcome_text = (
-        """خوش آمدید 👋
-          من دستیار مهاجرت شما هستم. کمک می‌کنم بهترین مسیرهای تحصیلی، کاری یا اقامت دائم را بر اساس شرایط شما پیدا کنید.
-            برای شروع، کمی درباره خودتان بگویید."""
+        """
+        خوش آمدید 👋 
+        من دستیار مهاجرت شما هستم. کمک می‌کنم بهترین مسیرهای تحصیلی، کاری یا اقامت دائم را بر اساس شرایط شما پیدا کنید.
+        برای شروع، کمی درباره خودتان بگویید.
+        مثلا: "من 25 ساله هستم، لیسانس کامپیوتر دارم، 3 سال سابقه کاری دارم، انگلیسی بلدم و می‌خوام به کانادا مهاجرت کنم."
+        """
     )
     await update.message.reply_text(welcome_text, reply_markup=reply_markup)
 
