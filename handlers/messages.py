@@ -16,7 +16,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         response = client.chat.completions.create(
-            model="google/gemini-2.0-flash-exp:free",
+            model="openai/gpt-oss-120b:free",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
             max_tokens=500
         )
