@@ -1,12 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from config import client, SYSTEM_PROMPT
-import re
 
-
-def escape_markdown(text):
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
-    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
@@ -40,16 +35,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await thinking_msg.delete()
 
-# Telegram supports MarkdownV2, so we need to escape special characters
-    reply = escape_markdown(reply)
-
 # Telegram has a message length limit, so we need to split long replies into parts
     MAX_LEN = 4000
     if len(reply) <= MAX_LEN:
-        await update.message.reply_text(reply, parse_mode="MarkdownV2")
+        await update.message.reply_text(reply, parse_mode="Markdown")
     else:
         parts = [reply[i:i+MAX_LEN] for i in range(0, len(reply), MAX_LEN)]
         for part in parts:
-            await update.message.reply_text(part, parse_mode="MarkdownV2")
+            await update.message.reply_text(part, parse_mode="Markdown")
     
-
