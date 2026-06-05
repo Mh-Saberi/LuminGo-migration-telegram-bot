@@ -1,5 +1,5 @@
 from telegram.ext import Application, MessageHandler, filters, CommandHandler, CallbackQueryHandler
-from config import TOKEN, WEBHOOK_URL, PORT
+from config import TOKEN
 from handlers.messages import handle_message
 from handlers.commands import start, restart, clear_history
 from handlers.buttons import button_handler
@@ -19,11 +19,7 @@ def main():
     
 
     print("OK!")
-    app.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            webhook_url=WEBHOOK_URL
-        )
+    app.run_polling() # همش سوال میپرسه
 
 if __name__ == "__main__":
     main()
