@@ -22,7 +22,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         reply = response.choices[0].message.content
 
-        # save only last 10 messages to avoid memory issues
+        # save only last 5 messages to avoid memory issues
         history.append({"role": "assistant", "content": reply})
         context.user_data["history"] = history[-5:]
 

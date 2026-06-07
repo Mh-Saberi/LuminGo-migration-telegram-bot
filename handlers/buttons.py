@@ -37,5 +37,4 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         text = "دکمه ناشناخته!"
 
-    await query.edit_message_text(text)  # جایگزینی پیام قبلی با پاسخ
-    # اگر نمی‌خواهید پیام قبلی عوض شود، می‌توانید از query.message.reply_text استفاده کنید.
+    await query.edit_message_text(text)  

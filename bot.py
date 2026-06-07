@@ -4,13 +4,13 @@ from handlers.messages import handle_message
 from handlers.commands import start, restart, clear_history
 from handlers.buttons import button_handler
 
-# --- تابع اصلی ---
+# --- main function ---
 def main():
+    # first we create the application with our bot token. This object will handle everything for us.
     app = Application.builder().token(TOKEN).build()
-# اول یه اپلیکیشن می‌سازیم با استفاده از توکن ربات. این شیء همه کارهای ربات رو راه می‌ندازه.
 
 
-    # هندلرها
+    # then we add handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("restart", restart))
     app.add_handler(CommandHandler("clear", clear_history))
@@ -19,12 +19,7 @@ def main():
     
 
     print("OK!")
-    app.run_polling() # همش سوال میپرسه
+    app.run_polling() # this will start the bot and keep it running until we stop it manually. It will check for new messages and call the appropriate handlers.
 
 if __name__ == "__main__":
     main()
-
-# python bot.py ==> __name__ --> "__main__"
-# iport bot ==> __name__ --> bot
-# Why == | Run directly? 
-# main() runs!

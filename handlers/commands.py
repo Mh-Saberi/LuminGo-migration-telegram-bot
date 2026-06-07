@@ -20,7 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(welcome_text, reply_markup=reply_markup)
 
-# restart conversation without /start
+# restart conversation with /start
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await start(update, context)  # just call start again
     await update.message.reply_text("مکالمه جدید شروع شد! 🔄")
