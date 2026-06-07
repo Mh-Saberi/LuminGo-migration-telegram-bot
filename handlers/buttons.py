@@ -18,7 +18,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     elif data == "faq":
         text = (
-            """❓ سوالات متداول دانشجویان
+            """❓ سوالات متداول
             1️⃣ بهترین کشور برای مهاجرت تحصیلی کدام است؟
             2️⃣ چطور شانس پذیرش در دانشگاه‌ها را افزایش دهم؟
             3️⃣ هزینه‌های مهاجرت چقدر است؟
